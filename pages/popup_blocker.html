@@ -1,0 +1,86 @@
+<div class="card">
+  <h3>Popup & Ad Blocker</h3>
+  <p>Toggle automatic popup blocking and ad filtering behavior.</p>
+  
+  <div class="card">
+    <h4>Popup Blocker</h4>
+    <label>
+      <input type="checkbox" id="popup-blocker-toggle" />
+      Enable Popup Blocker
+    </label>
+    <div class="status" id="popup-status">Disabled</div>
+  </div>
+
+  <div class="card">
+    <h4>Ad Blocker</h4>
+    <label>
+      <input type="checkbox" id="ad-blocker-toggle" />
+      Enable Ad Blocker
+    </label>
+    <div class="status" id="ad-status">Disabled</div>
+    
+    <h5>Ad Blocking Rules</h5>
+    <textarea class="input" id="ad-rules" placeholder="Enter custom ad blocking rules (one per line)"></textarea>
+    <button class="btn" id="save-ad-rules">Save Rules</button>
+  </div>
+
+  <div class="card">
+    <h4>Statistics</h4>
+    <div id="blocking-stats">
+      <p>Popups blocked: <span id="popup-count">0</span></p>
+      <p>Ads blocked: <span id="ad-count">0</span></p>
+      <button class="btn" id="reset-stats">Reset Stats</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Load saved state
+chrome.storage.sync.get(['popupBlockerEnabled', 'adBlockerEnabled', 'adRules', 'blockingStats'], (result) => {
+  const popupToggle = document.getElementById('popup-blocker-toggle');
+  const adToggle = document.getElementById('ad-blocker-toggle');
+  const adRules = document.getElementById('ad-rules');
+  
+  popupToggle.checked = result.popupBlockerEnabled || false;
+  adToggle.checked = result.adBlockerEnabled || false;
+  adRules.value = result.adRules || '';
+  
+  updateStats(result.blockingStats || {popups: 0, ads: 0});
+  updateStatus();
+});
+
+// Event listeners
+document.getElementById('popup-blocker-toggle').addEventListener('change', (e) => {
+  chrome.storage.sync.set({popupBlockerEnabled: e.target.checked});
+  updateStatus();
+});
+
+document.getElementById('ad-blocker-toggle').addEventListener('change', (e) => {
+  chrome.storage.sync.set({adBlockerEnabled: e.target.checked});
+  updateStatus();
+});
+
+document.getElementById('save-ad-rules').addEventListener('click', () => {
+  const rules = document.getElementById('ad-rules').value;
+  chrome.storage.sync.set({adRules: rules});
+  alert('Ad blocking rules saved!');
+});
+
+document.getElementById('reset-stats').addEventListener('click', () => {
+  chrome.storage.sync.set({blockingStats: {popups: 0, ads: 0}});
+  updateStats({popups: 0, ads: 0});
+});
+
+function updateStatus() {
+  const popupEnabled = document.getElementById('popup-blocker-toggle').checked;
+  const adEnabled = document.getElementById('ad-blocker-toggle').checked;
+  
+  document.getElementById('popup-status').textContent = popupEnabled ? 'Enabled' : 'Disabled';
+  document.getElementById('ad-status').textContent = adEnabled ? 'Enabled' : 'Disabled';
+}
+
+function updateStats(stats) {
+  document.getElementById('popup-count').textContent = stats.popups || 0;
+  document.getElementById('ad-count').textContent = stats.ads || 0;
+}
+</script>

@@ -1,0 +1,29 @@
+<div class="card">
+  <h3>TOS Scanner</h3>
+  <p>Analyze Terms of Service or Privacy Policy for problematic clauses.</p>
+  <input class="input" id="tos-url" placeholder="Enter URL or leave blank for current page" />
+  <button class="btn" id="scan-tos">Scan TOS</button>
+</div>
+<script>
+document.getElementById('scan-tos').addEventListener('click', async () => {
+  const url = document.getElementById('tos-url').value;
+  
+  if (url) {
+    // Scan specific URL
+    chrome.runtime.sendMessage({action:'scan-tos-url', url}, (response) => {
+      if(response && response.html) window.showModal(response.html);
+    });
+  } else {
+    // Scan current page
+    chrome.tabs.query({active:true,currentWindow:true}, (tabs)=>{
+      chrome.tabs.sendMessage(tabs[0].id, {action:'extract-page-text'}, (res)=>{
+        if(res && res.text) {
+          chrome.runtime.sendMessage({action:'analyze-tos', text: res.text, url: res.url}, (response) => {
+            if(response && response.html) window.showModal(response.html);
+          });
+        }
+      });
+    });
+  }
+});
+</script>

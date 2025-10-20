@@ -1,0 +1,21 @@
+<div class="card">
+  <h3>uBlock Helper</h3>
+  <p>Recommended filter lists for uBlock Origin:</p>
+  <div class="card">
+    <h4>Essential Filters</h4>
+    <textarea class="input" readonly style="height:100px;">https://easylist.to/easylist/easylist.txt
+https://easylist.to/easylist/easyprivacy.txt
+https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/filters.txt
+https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/privacy.txt</textarea>
+    <button class="btn" onclick="navigator.clipboard.writeText(this.previousElementSibling.value)">Copy Filters</button>
+  </div>
+  <div class="card">
+    <h4>Instructions</h4>
+    <ol>
+      <li>Install uBlock Origin extension</li>
+      <li>Go to uBlock settings → Filter lists</li>
+      <li>Click "Import" and paste the URLs above</li>
+      <li>Click "Apply changes"</li>
+    </ol>
+  </div>
+</div>

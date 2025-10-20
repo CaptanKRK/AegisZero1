@@ -1,0 +1,15 @@
+<div class="card">
+  <h2>AEGIS</h2>
+  <p>Welcome. Use the hamburger to open the left menu and choose a tool.</p>
+  <input class="input" id="test-url" placeholder="Paste URL to scan (optional)"/>
+  <button class="btn" id="scan-now">Scan Now</button>
+</div>
+<script>
+document.getElementById('scan-now').addEventListener('click', async ()=>{
+  const url = document.getElementById('test-url').value || '';
+  // send message to background to perform a website scan
+  chrome.runtime.sendMessage({action:'scan-website', url}, (response)=> {
+    if(response && response.resultHtml) window.showModal(response.resultHtml);
+  });
+});
+</script>
