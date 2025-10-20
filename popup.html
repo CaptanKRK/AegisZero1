@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>AEGIS</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <!-- top bar with hamburger -->
+  <div class="topbar">
+    <button id="hamburger" class="hamburger">☰</button>
+    <div class="title">AEGIS</div>
+  </div>
+
+  <div class="layout">
+    <aside id="sidebar" class="sidebar closed">
+      <!-- Sidebar links -->
+      <ul>
+        <li data-page="home">Home</li>
+        <li data-page="ebay">eBay Checker</li>
+        <li data-page="email">Email Checker</li>
+        <li data-page="popup_blocker">Popup Blocker</li>
+        <li data-page="tos">TOS Scanner</li>
+        <li data-page="ublock">uBlock Helper</li>
+        <li data-page="website">Website Checker</li>
+        <li data-page="youtube">YouTube Checker</li>
+      </ul>
+    </aside>
+
+    <main id="main-view" class="main">
+      <!-- dynamic content loaded here -->
+      <div id="view-container"></div>
+    </main>
+  </div>
+
+  <template id="modal-template">
+    <div class="modal-overlay">
+      <div class="modal">
+        <button class="modal-close">✕</button>
+        <div class="modal-body"></div>
+      </div>
+    </div>
+  </template>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

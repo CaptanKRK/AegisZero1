@@ -1,0 +1,40 @@
+:root{
+  --bg:#1b0b2a;
+  --panel:#2b0f3d;
+  --accent:#7b4bff; /* purple */
+  --muted:#cfc6ff;
+  --textbox:#3a1a50;
+  --glass: rgba(255,255,255,0.03);
+  --radius:12px;
+  font-family: Inter, Arial, sans-serif;
+}
+
+body{ margin:0; background:var(--bg); color:var(--muted); width:400px; height:600px; overflow:hidden;}
+.topbar{height:48px; display:flex; align-items:center; padding:8px; gap:8px; background:linear-gradient(90deg, rgba(0,0,0,0.2), transparent); }
+.hamburger{background:transparent; color:var(--muted); border:none; font-size:20px; cursor:pointer;}
+.title{font-weight:700; color:var(--accent); font-size:16px;}
+
+.layout{display:flex; height:calc(100% - 48px);}
+.sidebar{width:0; overflow:hidden; transition:width 180ms, padding 180ms, border-right-width 180ms; background:var(--panel); padding:0; border-right:0px solid rgba(255,255,255,0.03);}
+.sidebar.open{width:140px; padding:12px; border-right:1px solid rgba(255,255,255,0.03);}
+.sidebar ul{list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px;}
+.sidebar li{padding:8px; border-radius:8px; cursor:pointer; color:var(--muted); background:transparent;}
+.sidebar li:hover{background:var(--glass); color:white;}
+
+.main{flex:1; padding:12px; overflow-y:auto;}
+.card{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent); border-radius:var(--radius); padding:12px; margin-bottom:12px; box-shadow: 0 4px 14px rgba(0,0,0,0.4);}
+
+.input{display:block; width:100%; padding:8px; background:var(--textbox); border:none; color:var(--muted); border-radius:8px; margin-top:8px;}
+.btn{display:inline-block; padding:8px 12px; background:var(--accent); color:white; border-radius:8px; border:none; cursor:pointer; margin-top:8px;}
+
+.modal-overlay{position:fixed; left:0; top:0; right:0; bottom:0; display:flex; justify-content:center; align-items:center; background:rgba(0,0,0,0.6); z-index:9999;}
+.modal{width:360px; background:linear-gradient(180deg,#291030,#1b0720); border-radius:12px; padding:16px; box-shadow:0 10px 30px rgba(0,0,0,0.6); color:var(--muted);}
+.modal-close{position:absolute; right:16px; top:16px; background:transparent; color:var(--muted); border:none; font-size:16px; cursor:pointer;}
+
+/* Additional styles for better UX */
+.btn:hover{background:#6a3fe6;}
+.btn:disabled{background:#4a2a8a; cursor:not-allowed;}
+.input:focus{outline:none; border:1px solid var(--accent);}
+.status{color:#4ade80; font-size:14px; margin-top:8px;}
+.error{color:#f87171; font-size:14px; margin-top:8px;}
+.loading{color:#fbbf24; font-size:14px; margin-top:8px;}
