@@ -1,0 +1,46 @@
+<div class="settings-container">
+  <div class="settings-section">
+    <h2>Choose your preferred color theme</h2>
+    <p class="section-description">Pick a color with the picker, or adjust RGB <br> values and click Apply.</p>
+    <div class="color-picker-guide">
+      <span class="guide-arrow">▾</span>
+    </div>
+    
+    <div class="color-picker-section">
+      <div class="color-picker-container">
+        <input id="color-picker" type="color" value="#7b4bff">
+      </div>
+      <div class="color-settings">
+        <h3></h3>
+        <button id="apply-color-btn" class="settings-button">Apply Background Color</button>
+      </div>
+    </div>
+
+    <hr class="settings-divider">
+    <div class="preset-colors-section">
+      <p class="setting-description">Change your Accent:</p>
+      <div class="color-presets">
+        <label class="preset-option">
+          <input type="radio" name="color-scheme" value="purple">
+          <span class="preset-dot purple"></span>
+          Purple
+        </label>
+        <label class="preset-option">
+          <input type="radio" name="color-scheme" value="blue">
+          <span class="preset-dot blue"></span>
+          Blue
+        </label>
+        <label class="preset-option">
+          <input type="radio" name="color-scheme" value="green">
+          <span class="preset-dot green"></span>
+          Green
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <hr class="settings-divider">
+  <div class="settings-section">
+    <button id="reset-settings-btn" class="settings-button danger">Reset All Settings</button>
+  </div>
+</div>

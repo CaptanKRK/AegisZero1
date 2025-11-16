@@ -1,5 +1,6 @@
 # server/app.py
 from flask import Flask, request, jsonify
+import google.generativeai as genai
 import pickle
 import pandas as pd
 import os
@@ -9,6 +10,12 @@ from urllib.parse import urlparse
 app = Flask(__name__)
 MODEL_PATH = os.path.join(os.path.dirname(__file__), 'model.pkl')
 PHISHING_CSV = os.path.join(os.path.dirname(__file__), 'phishing_site_urls.csv')
+
+# Configure Gemini API if key is available
+if os.getenv('GEMINI_API_KEY'):
+    genai.configure(api_key=os.getenv('GEMINI_API_KEY'))
+    model = genai.GenerativeModel('gemini-pro')
+    print("Gemini API configured successfully")
 
 # load model — user must drop their own model.pkl here
 model = None

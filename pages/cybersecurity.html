@@ -1,0 +1,71 @@
+<div class="page-section">
+  <h2>Cybersecurity Tools</h2>
+  
+  <!-- Email Checker -->
+  <div class="tool-card">
+    <button class="favorite-star" data-tool="email-checker">★</button>
+    <h3>Email Checker</h3>
+    <p>Check if your email has been compromised in data breaches using HaveIBeenPwned API.</p>
+    <input id="email-input" class="input" placeholder="name@example.com" />
+    <button id="check-email" class="btn">Check Email</button>
+    <div id="email-result"></div>
+  </div>
+
+  <!-- Website Checker -->
+  <div class="tool-card">
+    <button class="favorite-star" data-tool="website-checker">★</button>
+    <h3>Website Checker</h3>
+    <p>Check if a website is likely phishing or malicious using AI classification.</p>
+    <input class="input" id="website-url" placeholder="Enter URL to check" />
+    <button class="btn" id="check-website">Check Website</button>
+  </div>
+
+  <!-- Ad Blocker & uBlock Helper -->
+  <div class="tool-card">
+    <button class="favorite-star" data-tool="ad-blocker">★</button>
+    <h3>Ad Blocker & uBlock Helper</h3>
+    <p>Configure ad blocking and get recommended filter lists for uBlock Origin.</p>
+    
+    <div class="card">
+      <h4>Ad Blocker Settings</h4>
+      <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+        <span>Enable Ad Blocker</span>
+        <label class="switch">
+          <input type="checkbox" id="ad-blocker-toggle">
+          <span class="slider"></span>
+        </label>
+      </label>
+      <div class="status" id="ad-status">Disabled</div>
+      
+      <h5>Ad Blocking Rules</h5>
+      <textarea class="input" id="ad-rules" placeholder="Enter custom ad blocking rules (one per line)"></textarea>
+      <button class="btn" id="save-ad-rules">Save Rules</button>
+    </div>
+
+    <div class="card">
+      <h4>uBlock Origin Filters</h4>
+      <p>Recommended filter lists for uBlock Origin:</p>
+      <textarea class="input" id="ublock-filters" readonly style="height:100px;">https://easylist.to/easylist/easylist.txt
+https://easylist.to/easylist/easyprivacy.txt
+https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/filters.txt
+https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/privacy.txt</textarea>
+      <button class="btn" id="copy-filters-btn">Copy Filters</button>
+      
+      <h5>Instructions</h5>
+      <ol style="font-size: 12px; margin: 8px 0;">
+        <li>Install uBlock Origin extension</li>
+        <li>Go to uBlock settings → Filter lists</li>
+        <li>Click "Import" and paste the URLs above</li>
+        <li>Click "Apply changes"</li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <h4>Statistics</h4>
+      <div id="blocking-stats">
+        <p>Ads blocked: <span id="ad-count">0</span></p>
+        <button class="btn" id="reset-stats">Reset Stats</button>
+      </div>
+    </div>
+  </div>
+</div>

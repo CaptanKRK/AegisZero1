@@ -1,0 +1,79 @@
+<div class="page-section">
+  <h2>Quality of Life Tools</h2>
+  
+  <!-- ToS Scanner -->
+  <div class="tool-card">
+    <button class="favorite-star" data-tool="tos-scanner">★</button>
+    <h3>ToS Scanner</h3>
+    <p>Automatically detects and analyzes Terms of Service for potential issues.</p>
+    <div id="tos-status">No ToS detected on current page</div>
+    <div id="tos-analysis" style="display:none">
+      <div class="risk-meter">
+        <div class="risk-level"></div>
+      </div>
+      <div class="analysis-details">
+        <h4>Analysis Results</h4>
+        <pre class="scrollable"></pre>
+      </div>
+    </div>
+  </div>
+
+    <!-- TOS Scanner -->
+  <div class="tool-card">
+    <button class="favorite-star" data-tool="tos-scanner">★</button>
+    <h3>TOS Scanner</h3>
+    <p>Analyze Terms of Service or Privacy Policy for problematic clauses.</p>
+    <input class="input" id="tos-url" placeholder="Enter URL or leave blank for current page" />
+    <button class="btn" id="scan-tos">Scan TOS</button>
+  </div>
+
+
+  <!-- Popup Blocker -->
+  <div class="tool-card">
+    <button class="favorite-star" data-tool="popup-blocker">★</button>
+    <h3>Popup Blocker</h3>
+    <p>Block annoying popups and unwanted dialogs automatically.</p>
+    
+    <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+      <span>Enable Popup Blocker</span>
+      <label class="switch">
+        <input type="checkbox" id="popup-blocker-toggle">
+        <span class="slider"></span>
+      </label>
+    </label>
+    <div class="status" id="popup-status">Disabled</div>
+    
+    <div class="card">
+      <h4>Statistics</h4>
+      <div id="popup-stats">
+        <p>Popups blocked: <span id="popup-count">0</span></p>
+        <button class="btn" id="reset-popup-stats">Reset Stats</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- eBay Checker -->
+  <div class="tool-card">
+    <button class="favorite-star" data-tool="ebay-checker">★</button>
+    <h3>eBay Checker</h3>
+    <p>Analyze eBay listings for potential scams or suspicious activity.</p>
+    <p><em>Open an eBay listing in the active tab, then click "Analyze Listing".</em></p>
+    <button class="btn" id="analyze-ebay">Analyze Listing</button>
+  </div>
+
+  <!-- YouTube Checker -->
+  <div class="tool-card">
+    <button class="favorite-star" data-tool="youtube-checker">★</button>
+    <h3>YouTube Checker</h3>
+    <p>Analyze YouTube videos for potential issues or suspicious content.</p>
+    <p><em>Open a YouTube video in the active tab, then click "Analyze Video".</em></p>
+    <button class="btn" id="analyze-youtube">Analyze Video</button>
+  </div>
+
+  <!-- Currency Exchange -->
+  <!-- Currency Exchange (removed) -->
+</div>
+
+<!-- currency script removed -->
+
+

@@ -9,27 +9,784 @@
   font-family: Inter, Arial, sans-serif;
 }
 
-body{ margin:0; background:var(--bg); color:var(--muted); width:400px; height:600px; overflow:hidden;}
-.topbar{height:48px; display:flex; align-items:center; padding:8px; gap:8px; background:linear-gradient(90deg, rgba(0,0,0,0.2), transparent); }
-.hamburger{background:transparent; color:var(--muted); border:none; font-size:20px; cursor:pointer;}
-.title{font-weight:700; color:var(--accent); font-size:16px;}
+/* Use border-box sizing everywhere to avoid input overflow issues */
+html { box-sizing: border-box; }
+*, *::before, *::after { box-sizing: inherit; }
 
-.layout{display:flex; height:calc(100% - 48px);}
-.sidebar{width:0; overflow:hidden; transition:width 180ms, padding 180ms, border-right-width 180ms; background:var(--panel); padding:0; border-right:0px solid rgba(255,255,255,0.03);}
-.sidebar.open{width:140px; padding:12px; border-right:1px solid rgba(255,255,255,0.03);}
-.sidebar ul{list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px;}
+/* Fix scrolling issues */
+body {
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+}
+
+/* Hide default scrollbar */
+body::-webkit-scrollbar {
+  width: 8px;
+}
+
+body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: rgba(155, 155, 155, 0.5);
+  border-radius: 4px;
+}
+
+/* Prevent nested scrolling */
+.tool-card {
+  overflow: hidden;
+}
+
+.tool-card pre {
+  max-height: 200px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+/* ToS Scanner Styles */
+.risk-meter {
+  height: 8px;
+  background: var(--textbox);
+  border-radius: 4px;
+  margin: 16px 0;
+  overflow: hidden;
+}
+
+.risk-level {
+  height: 100%;
+  width: 0%;
+  transition: width 0.3s ease-out;
+  background: var(--accent);
+}
+
+.analysis-details {
+  background: var(--textbox);
+  padding: 12px;
+  border-radius: var(--radius);
+  margin-top: 12px;
+}
+
+body{ 
+  margin:0; 
+  padding:0;
+  background:var(--bg); 
+  color:var(--muted);
+}
+
+/* Ensure popup has a reasonable minimum size in the browser UI */
+body {
+  min-width: 400px;
+  min-height: 600px;
+}
+
+/* Global scrollbar styling */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) var(--panel);
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--panel);
+  border-radius: 4px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 4px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #6a3fe6;
+}
+.topbar{
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height:48px;
+  display:flex;
+  align-items:center;
+  padding:8px;
+  background: var(--bg);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  z-index: 1000;
+}
+.hamburger{
+  background:transparent;
+  color:var(--muted);
+  border:none;
+  font-size:28px; /* slightly larger hamburger */
+  cursor:pointer;
+  position: relative;
+  z-index: 1101;
+  /* hamburger should remain static; arrow will animate separately */
+  animation: none;
+}
+.title{
+  font-weight:700;
+  color:var(--accent);
+  font-size:24px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+/* Hamburger guide element (arrow to the right of the hamburger) */
+.hamburger-guide{
+  display:flex;
+  position: fixed;
+  left: 56px; /* position near the right of the hamburger */
+  top: 14px; /* Reduced from 18px to match reduced vertical spacing */
+  align-items:center;
+  z-index: 1100;
+  pointer-events: none; /* don't block clicks */
+}
+
+.hamburger-guide .guide-arrow{
+  color: var(--accent);
+  /* horizontal-only animation */
+  animation: guide-horizontal 1.2s infinite cubic-bezier(.28,.84,.42,1);
+}
+
+/* style the curved SVG arrow */
+.hamburger-guide .arrow-svg{
+  display: block;
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.4));
+}
+
+/* Hamburger guide: arrow positioned below the hamburger. pointer-events none so it won't block clicks */
+/* show the separate guide element; we'll hide the pseudo-element to avoid diagonal motion */
+.hamburger-guide{ display:flex; }
+
+/* Color picker guide element (bobbing arrow pointing to color picker) */
+.color-picker-guide{
+  display:flex;
+  justify-content: center;
+  margin: -30px 0 -1px 0; /* Reduced top margin to move arrow higher */
+  pointer-events: none;
+}
+
+.color-picker-guide .guide-arrow{
+  color: var(--accent);
+  font-size: 40px; /* Increased from 20px to make it bigger */
+  text-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  /* vertical bobbing animation */
+  animation: guide-vertical 1.2s infinite cubic-bezier(.28,.84,.42,1);
+}
+
+/* Arrow displayed as a pseudo-element on the hamburger so it sits directly to the right and
+   moves in sync with the hamburger. Pointer-events none so it doesn't block clicks. */
+.hamburger{ position: relative; }
+/* hide the pseudo-element arrow so it doesn't inherit the hamburger's vertical transform and create diagonal motion */
+.hamburger::after{ display: none !important; }
+
+/* (hamburger styles defined above) */
+
+@keyframes guide-bounce{
+  0% { transform: translateY(0); }
+  30% { transform: translateY(-8px); }
+  50% { transform: translateY(0); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes guide-horizontal{
+  0% { transform: translateY(-50%) translateX(0); }
+  30% { transform: translateY(-50%) translateX(-8px); }
+  50% { transform: translateY(-50%) translateX(0); }
+  100% { transform: translateY(-50%) translateX(0); }
+}
+
+@keyframes guide-vertical{
+  0% { transform: translateY(0); }
+  30% { transform: translateY(8px); }
+  50% { transform: translateY(0); }
+  100% { transform: translateY(0); }
+}
+
+  .layout{display:flex; height:100%; padding-top:48px;}
+
+    /* Make the sidebar act as a full-width overlay when opened. It sits below the topbar (top:48px)
+       and expands to cover the popup area so the hamburger opens a full overlay drawer. */
+    .sidebar{
+      position: fixed;
+      top: 52px; /* Reduced from 65px to minimize vertical space */
+      left: 0;
+      bottom: 0;
+      height: calc(100vh - 52px); /* Reset height to match top position */
+      width: 0;
+      overflow: hidden;
+      transition: all 220ms cubic-bezier(0.4, 0, 0.2, 1);
+      background: var(--bg);
+      padding: 0;
+      border-right: 1px solid rgba(255,255,255,0.05);
+      box-shadow: 2px 0 12px rgba(0,0,0,0.2);
+      z-index: 1002;
+    }
+
+    .sidebar.open{
+      width: 95%; /* increase to 9/10 coverage */
+      padding: 0 12px 12px 12px;
+    }
+.sidebar ul{
+    list-style:none; 
+    padding: 12px 0 0 0; /* Reduced from 24px to minimize vertical space */
+    margin:0; 
+    display:flex; 
+    flex-direction:column; 
+    gap:8px; 
+    flex:1;
+}
 .sidebar li{padding:8px; border-radius:8px; cursor:pointer; color:var(--muted); background:transparent;}
 .sidebar li:hover{background:var(--glass); color:white;}
 
-.main{flex:1; padding:12px; overflow-y:auto;}
-.card{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent); border-radius:var(--radius); padding:12px; margin-bottom:12px; box-shadow: 0 4px 14px rgba(0,0,0,0.4);}
+.sidebar-footer {
+  margin-top: auto;
+  padding: 8px 0;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
 
-.input{display:block; width:100%; padding:8px; background:var(--textbox); border:none; color:var(--muted); border-radius:8px; margin-top:8px;}
+.settings-btn {
+  width: 100%;
+  padding: 8px;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s;
+}
+
+.settings-btn:hover {
+  background: var(--glass);
+  color: white;
+  border-color: var(--accent);
+}
+
+.main {
+  flex: 1;
+  padding: 12px;
+  overflow-y: auto;
+  height: calc(100vh - 48px);
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  margin-top: 16px; /* Reduced from 28px to minimize vertical space */
+}
+
+.main::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+.tool-card {
+  margin-bottom: 16px;
+  overflow: visible;
+}
+.card{
+  background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent); 
+  border-radius:var(--radius); 
+  padding:12px; 
+  margin-bottom:12px; 
+  box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+  overflow: hidden;
+}
+
+.card h3, .card h4, .card h5 {
+  margin: 0 0 8px 0;
+  line-height: 1.3;
+}
+
+/* Collapsible About card styles (uses native <details>) */
+details.card {
+  padding: 0; /* summary and body will handle padding */
+}
+
+
+details.card > summary.about-summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* center the label */
+  gap: 12px;
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 16px;
+  position: relative; /* for absolute arrow */
+}
+
+details.card > summary.about-summary::-webkit-details-marker {
+  display: none;
+}
+
+details.card > summary.about-summary::after {
+  content: '▾';
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: transform 0.2s ease;
+  color: var(--accent);
+}
+
+details.card[open] > summary.about-summary::after {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+details.card .about-body {
+  padding: 12px;
+  border-top: 1px solid rgba(255,255,255,0.03);
+}
+
+.card p {
+  margin: 0 0 8px 0;
+  line-height: 1.4;
+}
+
+.card ol, .card ul {
+  margin: 8px 0;
+  padding-left: 20px;
+}
+
+.card li {
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+/* Form inputs: make them respect container width and avoid overflow */
+.input{
+  display:block;
+  width:100%;
+  max-width: 100%; /* allow inputs to grow to full container width */
+  padding:10px 12px;
+  background: var(--bg); /* match user-selected background */
+  border: 1px solid rgba(255,255,255,0.04);
+  color:var(--muted);
+  border-radius:8px;
+  margin-top:8px;
+  box-sizing: border-box;
+}
+.input::placeholder { color: rgba(207,198,255,0.6); }
+.tool-card input, .tool-card textarea {
+  width: 100%;
+  max-width: 100%;
+}
 .btn{display:inline-block; padding:8px 12px; background:var(--accent); color:white; border-radius:8px; border:none; cursor:pointer; margin-top:8px;}
 
 .modal-overlay{position:fixed; left:0; top:0; right:0; bottom:0; display:flex; justify-content:center; align-items:center; background:rgba(0,0,0,0.6); z-index:9999;}
-.modal{width:360px; background:linear-gradient(180deg,#291030,#1b0720); border-radius:12px; padding:16px; box-shadow:0 10px 30px rgba(0,0,0,0.6); color:var(--muted);}
+.modal{width:360px; max-width:90%; background: var(--bg); border-radius:12px; padding:16px; box-shadow:0 10px 30px rgba(0,0,0,0.6); color:var(--muted); border: 1px solid rgba(255,255,255,0.03);} 
 .modal-close{position:absolute; right:16px; top:16px; background:transparent; color:var(--muted); border:none; font-size:16px; cursor:pointer;}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  justify-content: flex-end;
+}
+
+.modal h3 {
+  margin: 0 0 12px 0;
+  color: var(--accent);
+}
+
+.modal p {
+  margin: 0 0 16px 0;
+  line-height: 1.4;
+}
+
+/* Custom Switch Toggle */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #4a2a8a;
+  transition: .4s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: var(--accent);
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+/* Favorites System */
+.favorite-star {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #666;
+  transition: all 0.2s ease;
+  z-index: 10;
+  padding: 0;
+  outline: none;
+  line-height: 1;
+}
+
+.favorite-star:hover {
+  color: #ffd700;
+  transform: scale(1.2);
+}
+
+.favorite-star.active {
+  color: #ffd700 !important;
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+}
+
+.favorite-star:focus {
+  outline: none;
+}
+
+.tool-card {
+  position: relative;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+  border-radius: var(--radius);
+  padding: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+  min-height: 120px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.tool-card h3 {
+  margin: 0 0 8px 0;
+  padding-right: 30px; /* Space for star */
+  padding-left: 20px; /* Space for drag handle when in config mode */
+  font-size: 16px;
+  line-height: 1.3;
+}
+
+.tool-card p {
+  margin: 0 0 12px 0;
+  padding-left: 20px; /* Space for drag handle when in config mode */
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+.tool-card .btn {
+  margin-left: 20px; /* Space for drag handle when in config mode */
+}
+
+.favorites-section {
+  background: linear-gradient(135deg, rgba(123, 75, 255, 0.1), rgba(123, 75, 255, 0.05));
+  border: 1px solid rgba(123, 75, 255, 0.2);
+  border-radius: var(--radius);
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.favorites-section h3 {
+  color: var(--accent);
+  margin: 0 0 8px 0;
+  font-size: 14px;
+}
+
+.favorite-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 8px;
+  margin-bottom: 6px;
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+.favorite-item:last-child {
+  margin-bottom: 0;
+}
+
+.favorite-item:hover {
+  background: rgba(255,255,255,0.08);
+  transform: translateX(2px);
+}
+
+.favorite-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.favorite-name {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.remove-favorite {
+  background: none;
+  border: none;
+  color: #f87171;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.remove-favorite:hover {
+  background: rgba(248, 113, 113, 0.2);
+  color: #ff6b6b;
+}
+
+/* Page Organization */
+.page-section {
+  margin-bottom: 16px;
+}
+
+.page-section h2 {
+  color: var(--accent);
+  font-size: 18px;
+  margin: 0 0 8px 0;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(123, 75, 255, 0.2);
+}
+
+/* Settings Page Styles */
+.settings-container {
+  /* Make settings match the popup width and avoid forcing a wider layout */
+  padding: 16px;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.settings-section {
+  margin-bottom: 32px;
+}
+
+.settings-section h2 {
+  color: var(--accent);
+  font-size: 20px;
+  margin: 0 0 8px 8px;
+}
+
+.section-description {
+  color: var(--muted);
+  font-size: 14px;
+  margin: 0 0 20px 33px;
+  opacity: 0.8;
+}
+
+.color-picker-section {
+  padding: 0;
+  margin-bottom: 24px;
+}
+
+.color-picker-container {
+  margin-bottom: 16px;
+}
+
+#color-picker {
+  /* Responsive: fill available space but cap at a reasonable width */
+  width: 100%;
+  max-width: 420px;
+  height: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  background-color: var(--bg) !important;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+#color-picker::-webkit-color-swatch-wrapper {
+  padding: 0;
+  background: none;
+}
+
+#color-picker::-webkit-color-swatch {
+  border: none;
+  border-radius: 6px;
+}
+
+.settings-divider {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin: 24px 0;
+}
+
+.color-settings h3 {
+  font-size: 16px;
+  color: var(--muted);
+  margin: 0 0 8px 0;
+}
+
+.setting-description {
+  color: var(--muted);
+  font-size: 13px;
+  margin: 0 0 12px 0;
+  opacity: 0.7;
+}
+
+.settings-button {
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 14px;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+.settings-button:hover {
+  background: #6a3fe6;
+}
+
+.settings-button.danger {
+  background: #f87171;
+}
+
+.settings-button.danger:hover {
+  background: #ef4444;
+}
+
+.preset-colors-section {
+  margin-top: 24px;
+}
+
+.color-presets {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+  margin-left: 26px; /* shift presets slightly to the right */
+  margin-bottom: -10px;
+}
+
+.preset-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.preset-option:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.preset-option input[type="radio"] {
+  display: none;
+}
+
+.preset-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.preset-dot.purple { background: #7b4bff; }
+.preset-dot.blue { background: #3b82f6; }
+.preset-dot.green { background: #10b981; }
+
+/* Drag and Drop Styles */
+.config-tool {
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.config-tool.dragging {
+  opacity: 0.7;
+  transform: rotate(2deg) scale(0.95);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+  z-index: 1000;
+}
+
+.drag-handle {
+  position: absolute;
+  top: 50%;
+  left: 8px;
+  transform: translateY(-50%);
+  color: var(--muted);
+  font-size: 16px;
+  cursor: grab;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+  display: block;
+}
+
+.config-tool:hover .drag-handle {
+  opacity: 1;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.save-notification {
+  position: fixed;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #10b981;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 500;
+  z-index: 10000;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
 
 /* Additional styles for better UX */
 .btn:hover{background:#6a3fe6;}

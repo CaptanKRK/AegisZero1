@@ -1,0 +1,185 @@
+<div class="config-mode-header">
+  <h2>Configuration Mode</h2>
+  <p>Drag and drop tools to reorder them. Use the eye icon to toggle visibility.</p>
+</div>
+  
+  <div class="config-section">
+    <h3>Cybersecurity Tools</h3>
+    <div id="cybersecurity-tools" class="tool-list">
+      <div class="config-tool" data-tool="email-checker" draggable="true">
+        <span class="drag-handle">⋮⋮</span>
+        <span class="tool-name">Email Checker</span>
+        <button class="toggle-visibility" data-tool="email-checker">👁️</button>
+      </div>
+      <div class="config-tool" data-tool="website-checker" draggable="true">
+        <span class="drag-handle">⋮⋮</span>
+        <span class="tool-name">Website Checker</span>
+        <button class="toggle-visibility" data-tool="website-checker">👁️</button>
+      </div>
+      <div class="config-tool" data-tool="ad-blocker" draggable="true">
+        <span class="drag-handle">⋮⋮</span>
+        <span class="tool-name">Ad Blocker & uBlock Helper</span>
+        <button class="toggle-visibility" data-tool="ad-blocker">👁️</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="config-section">
+    <h3>Quality of Life Tools</h3>
+    <div id="quality-tools" class="tool-list">
+      <div class="config-tool" data-tool="popup-blocker" draggable="true">
+        <span class="drag-handle">⋮⋮</span>
+        <span class="tool-name">Popup Blocker</span>
+        <button class="toggle-visibility" data-tool="popup-blocker">👁️</button>
+      </div>
+      <div class="config-tool" data-tool="ebay-checker" draggable="true">
+        <span class="drag-handle">⋮⋮</span>
+        <span class="tool-name">eBay Checker</span>
+        <button class="toggle-visibility" data-tool="ebay-checker">👁️</button>
+      </div>
+      <div class="config-tool" data-tool="tos-scanner" draggable="true">
+        <span class="drag-handle">⋮⋮</span>
+        <span class="tool-name">TOS Scanner</span>
+        <button class="toggle-visibility" data-tool="tos-scanner">👁️</button>
+      </div>
+      <div class="config-tool" data-tool="youtube-checker" draggable="true">
+        <span class="drag-handle">⋮⋮</span>
+        <span class="tool-name">YouTube Checker</span>
+        <button class="toggle-visibility" data-tool="youtube-checker">👁️</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="config-actions">
+    <button class="btn" id="save-config">Save Configuration</button>
+    <button class="btn" id="cancel-config" style="background: #6b7280;">Cancel</button>
+  </div>
+</div>
+
+<script>
+let draggedElement = null;
+
+// Load saved configuration
+chrome.storage.sync.get(['toolOrder', 'toolVisibility'], (result) => {
+  const order = result.toolOrder || {};
+  const visibility = result.toolVisibility || {};
+  
+  // Apply saved order
+  Object.keys(order).forEach(section => {
+    const container = document.getElementById(section);
+    if (container) {
+      order[section].forEach(toolId => {
+        const tool = container.querySelector(`[data-tool="${toolId}"]`);
+        if (tool) {
+          container.appendChild(tool);
+        }
+      });
+    }
+  });
+  
+  // Apply saved visibility
+  Object.keys(visibility).forEach(toolId => {
+    const tool = document.querySelector(`[data-tool="${toolId}"]`);
+    const button = tool?.querySelector('.toggle-visibility');
+    if (tool && button) {
+      tool.classList.toggle('hidden', !visibility[toolId]);
+      button.textContent = visibility[toolId] ? '👁️' : '🙈';
+    }
+  });
+});
+
+// Drag and drop functionality
+document.querySelectorAll('.config-tool').forEach(tool => {
+  tool.addEventListener('dragstart', (e) => {
+    draggedElement = tool;
+    tool.classList.add('dragging');
+  });
+  
+  tool.addEventListener('dragend', (e) => {
+    tool.classList.remove('dragging');
+    draggedElement = null;
+  });
+});
+
+document.querySelectorAll('.tool-list').forEach(list => {
+  list.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    const afterElement = getDragAfterElement(list, e.clientY);
+    if (afterElement == null) {
+      list.appendChild(draggedElement);
+    } else {
+      list.insertBefore(draggedElement, afterElement);
+    }
+  });
+});
+
+function getDragAfterElement(container, y) {
+  const draggableElements = [...container.querySelectorAll('.config-tool:not(.dragging)')];
+  
+  return draggableElements.reduce((closest, child) => {
+    const box = child.getBoundingClientRect();
+    const offset = y - box.top - box.height / 2;
+    
+    if (offset < 0 && offset > closest.offset) {
+      return { offset: offset, element: child };
+    } else {
+      return closest;
+    }
+  }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
+// Toggle visibility
+document.querySelectorAll('.toggle-visibility').forEach(button => {
+  button.addEventListener('click', (e) => {
+    const tool = e.target.closest('.config-tool');
+    const toolId = tool.dataset.tool;
+    const isVisible = !tool.classList.contains('hidden');
+    
+    tool.classList.toggle('hidden');
+    button.textContent = isVisible ? '🙈' : '👁️';
+  });
+});
+
+// Save configuration
+document.getElementById('save-config').addEventListener('click', () => {
+  const toolOrder = {};
+  const toolVisibility = {};
+  
+  document.querySelectorAll('.tool-list').forEach(list => {
+    const section = list.id;
+    toolOrder[section] = [];
+    
+    list.querySelectorAll('.config-tool').forEach(tool => {
+      const toolId = tool.dataset.tool;
+      toolOrder[section].push(toolId);
+      toolVisibility[toolId] = !tool.classList.contains('hidden');
+    });
+  });
+  
+  chrome.storage.sync.set({
+    toolOrder: toolOrder,
+    toolVisibility: toolVisibility
+  });
+  
+  showSaveNotification();
+  setTimeout(() => {
+    loadPage('settings');
+  }, 1500);
+});
+
+// Cancel configuration
+document.getElementById('cancel-config').addEventListener('click', () => {
+  loadPage('settings');
+});
+
+function showSaveNotification() {
+  const notification = document.createElement('div');
+  notification.className = 'save-notification';
+  notification.textContent = 'Configuration Saved!';
+  document.body.appendChild(notification);
+  
+  setTimeout(() => {
+    notification.remove();
+  }, 2000);
+}
+</script>

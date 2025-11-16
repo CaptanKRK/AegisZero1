@@ -1,15 +1,13 @@
-<div class="card">
-  <h2>AEGIS</h2>
-  <p>Welcome. Use the hamburger to open the left menu and choose a tool.</p>
-  <input class="input" id="test-url" placeholder="Paste URL to scan (optional)"/>
-  <button class="btn" id="scan-now">Scan Now</button>
+<div class="page-section" id="favorites-section">
+  <h2>⭐ Favorites</h2>
+  <p style="text-align: center; opacity: 0.6; padding: 20px;">No favorites yet. Click the star icon on any tool to add it here!</p>
 </div>
-<script>
-document.getElementById('scan-now').addEventListener('click', async ()=>{
-  const url = document.getElementById('test-url').value || '';
-  // send message to background to perform a website scan
-  chrome.runtime.sendMessage({action:'scan-website', url}, (response)=> {
-    if(response && response.resultHtml) window.showModal(response.resultHtml);
-  });
-});
-</script>
+  <hr class="settings-divider">
+<details class="card about-card" open>
+  <summary class="about-summary">About Us</summary>
+  <div class="about-body">
+    <p>
+      Meet Aegis Zero — the ultimate all-in-one Chrome extension designed to simplify and supercharge your browsing experience. Whether you're managing productivity, enhancing privacy, blocking distractions, or organizing your online workflow, Aegis Zero brings every essential tool together in one sleek, intuitive interface. Built with advanced cybersecurity features, it safeguards your data, protects against malicious sites, and keeps your personal information private — all while you browse effortlessly. No more juggling multiple extensions or cluttering your toolbar — Aegis Zero delivers everything you need, seamlessly integrated and optimized for speed, security, and ease of use. Perfect for professionals, students, and everyday users alike, it's the only extension you'll ever need to unlock the full potential of your browser.
+    </p>
+  </div>
+</details>

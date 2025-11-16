@@ -1,0 +1,15 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Open Chrome Extension in Browser",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-Command",
+				"Write-Host 'To test the extension:'; Write-Host '1. Open Chrome and go to chrome://extensions/'; Write-Host '2. Enable Developer mode'; Write-Host '3. Click Load unpacked and select this folder'; Write-Host '4. Test the favorites (star icons) and configuration mode'; Write-Host 'Extension folder: '; Get-Location"
+			],
+			"group": "test"
+		}
+	]
+}

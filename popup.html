@@ -2,14 +2,26 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>AEGIS</title>
+  <title>AEGIS CERO1</title>
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
   <!-- top bar with hamburger -->
   <div class="topbar">
     <button id="hamburger" class="hamburger">☰</button>
-    <div class="title">AEGIS</div>
+    <div class="title">AEGIS CERO1</div>
+  </div>
+
+  <!-- Helper guide pointing to the hamburger (curved arrow to the right) -->
+  <div id="hamburger-guide" class="hamburger-guide" aria-hidden="true">
+    <div class="guide-arrow">
+      <svg class="arrow-svg" width="110" height="34" viewBox="0 0 110 34" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <!-- Curved shaft (right-to-left curve) -->
+        <path d="M106 22 C 88 30 64 30 48 26" stroke="currentColor" stroke-width="4" fill="none" stroke-linecap="round" />
+        <!-- Left arrowhead -->
+        <polyline points="49,26 30,17 49,8" stroke="currentColor" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </div>
   </div>
 
   <div class="layout">
@@ -17,14 +29,12 @@
       <!-- Sidebar links -->
       <ul>
         <li data-page="home">Home</li>
-        <li data-page="ebay">eBay Checker</li>
-        <li data-page="email">Email Checker</li>
-        <li data-page="popup_blocker">Popup Blocker</li>
-        <li data-page="tos">TOS Scanner</li>
-        <li data-page="ublock">uBlock Helper</li>
-        <li data-page="website">Website Checker</li>
-        <li data-page="youtube">YouTube Checker</li>
+        <li data-page="cybersecurity">Cybersecurity</li>
+        <li data-page="quality_of_life">Quality of Life</li>
       </ul>
+      <div class="sidebar-footer">
+        <button id="settings-btn" class="settings-btn">⚙️ Settings</button>
+      </div>
     </aside>
 
     <main id="main-view" class="main">
