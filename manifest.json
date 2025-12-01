@@ -38,8 +38,8 @@
     },
     {
       "matches": ["<all_urls>"],
-      "js": ["scripts/tos_scanner.js", "content-scripts/tos_content.js", "content-scripts/ad_blocker.js"],
-      "run_at": "document_idle"
+      "js": ["scripts/tos_scanner.js", "content-scripts/tos_content.js", "content-scripts/ad_blocker.js", "content-scripts/autoclicker.js"],
+      "run_at": "document_start"
     }
   ]
 }

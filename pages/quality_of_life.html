@@ -61,17 +61,28 @@
     <button class="btn" id="analyze-ebay">Analyze Listing</button>
   </div>
 
-  <!-- YouTube Checker -->
+  <!-- Autoclicker -->
   <div class="tool-card">
-    <button class="favorite-star" data-tool="youtube-checker">★</button>
-    <h3>YouTube Checker</h3>
-    <p>Analyze YouTube videos for potential issues or suspicious content.</p>
-    <p><em>Open a YouTube video in the active tab, then click "Analyze Video".</em></p>
-    <button class="btn" id="analyze-youtube">Analyze Video</button>
-  </div>
+    <button class="favorite-star" data-tool="autoclicker">★</button>
+    <h3>Autoclicker</h3>
+    <p>Automate clicks on website pages at your mouse position.</p>
 
-  <!-- Currency Exchange -->
-  <!-- Currency Exchange (removed) -->
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+      <label style="width:140px">
+        <div style="font-size:12px">Interval (ms)</div>
+        <input id="ac-interval" class="input" value="100" />
+      </label>
+      <button id="ac-start" class="btn">Start</button>
+      <button id="ac-stop" class="btn">Stop</button>
+      <button id="ac-test" class="btn">Test</button>
+      <label style="display:flex;align-items:center;gap:8px;margin-left:auto;font-size:12px">
+        <input type="checkbox" id="ac-highlight" />
+        <span>Highlight clicks</span>
+      </label>
+    </div>
+
+    <div id="ac-result" style="margin-top:10px;font-weight:600;font-size:12px"></div>
+  </div>
 </div>
 
 <!-- currency script removed -->

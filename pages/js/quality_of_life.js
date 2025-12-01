@@ -486,5 +486,88 @@
     }
   });
 
+  // ===== AUTOCLICKER =====
+  let isRunning = false;
+  let runInterval = null;
+
+  function getSettings() {
+    return {
+      interval: parseInt(document.getElementById('ac-interval').value, 10) || 100,
+      highlight: document.getElementById('ac-highlight').checked
+    };
+  }
+
+  function updateResult(message, type = 'info') {
+    const resultEl = document.getElementById('ac-result');
+    if (!resultEl) return;
+    resultEl.textContent = message;
+    resultEl.style.color = type === 'error' ? '#d32f2f' : type === 'success' ? '#388e3c' : '#1976d2';
+  }
+
+  async function sendClickMessage(action, settings) {
+    try {
+      const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (!tabs[0]) {
+        updateResult('No active tab', 'error');
+        return false;
+      }
+
+      return new Promise((resolve) => {
+        chrome.tabs.sendMessage(
+          tabs[0].id,
+          { action, highlight: settings.highlight },
+          (response) => {
+            if (chrome.runtime.lastError) {
+              console.error('[AC] Error:', chrome.runtime.lastError.message);
+              resolve(false);
+              return;
+            }
+            resolve(response?.success === true);
+          }
+        );
+      });
+    } catch (err) {
+      console.error('[AC] Error:', err);
+      updateResult('Error: ' + err.message, 'error');
+      return false;
+    }
+  }
+
+  async function testClick() {
+    const settings = getSettings();
+    updateResult('Testing...', 'info');
+    const success = await sendClickMessage('autoclick_test', settings);
+    updateResult(success ? 'Clicked!' : 'Failed', success ? 'success' : 'error');
+  }
+
+  async function startAutoclick() {
+    if (isRunning) {
+      updateResult('Already running', 'error');
+      return;
+    }
+    const settings = getSettings();
+    isRunning = true;
+    updateResult(`Running (${settings.interval}ms)`, 'success');
+    runInterval = setInterval(async () => {
+      await sendClickMessage('autoclick', settings);
+    }, settings.interval);
+  }
+
+  function stopAutoclick() {
+    if (!isRunning) {
+      updateResult('Not running', 'error');
+      return;
+    }
+    clearInterval(runInterval);
+    isRunning = false;
+    updateResult('Stopped', 'info');
+  }
+
+  setTimeout(() => {
+    document.getElementById('ac-start')?.addEventListener('click', startAutoclick);
+    document.getElementById('ac-stop')?.addEventListener('click', stopAutoclick);
+    document.getElementById('ac-test')?.addEventListener('click', testClick);
+  }, 100);
+
   console.log('Quality of Life page script loaded');
 })();
